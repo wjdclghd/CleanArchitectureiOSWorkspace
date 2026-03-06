@@ -1,0 +1,8 @@
+//
+//  Release.xcconfig
+//  CleanSprintiOS
+//
+//  Created by jch on 8/16/25.
+//
+
+#include? "Release.xcconfig.local"

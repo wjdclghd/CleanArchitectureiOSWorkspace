@@ -1,0 +1,117 @@
+# =========================
+# macOS
+# =========================
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+*.icloud
+
+# =========================
+# Xcode / Swift
+# =========================
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+*.moved-aside
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+*.hmap
+
+# Build artifacts
+build/
+DerivedData/
+**/Derived/
+*.ipa
+*.dSYM
+*.dSYM.zip
+*.gcno
+
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# =========================
+# Swift Package Manager
+# =========================
+.swiftpm/
+.build/
+
+# App 레포라면 보통 commit 권장
+# 라이브러리 레포면 ignore 하는 경우도 많음
+# Package.resolved
+
+# =========================
+# Tuist
+# =========================
+Tuist/.build/
+.tuist-cache/
+tuist-generated
+
+# Tuist / Xcode generated project files
+# 현재 정책: generated .xcodeproj / .xcworkspace 는 commit하지 않음
+**/*.xcodeproj
+**/*.xcworkspace
+
+# 단, Workspace.swift / Project.swift / Tuist.swift 는 Swift 파일이라 영향 없음
+
+# =========================
+# Local Config
+# =========================
+**/*.xcconfig.local
+.env
+.env.*
+
+# =========================
+# CocoaPods / Carthage / etc
+# =========================
+Pods/
+Carthage/Build/
+Dependencies/
+.accio/
+
+# =========================
+# fastlane
+# =========================
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# =========================
+# Bundler / Ruby
+# =========================
+.bundle/
+vendor/
+.ruby-version
+
+# =========================
+# Logs / IDE
+# =========================
+*.log
+.idea/
+
+# =========================
+# Injection / temp
+# =========================
+iOSInjectionProject/
