@@ -1,0 +1,3 @@
+app_identifier("com.jch.SearchFeatureModule")
+#apple_id("your-apple-id@example.com")
+#team_id("XXXXXXXXXX") 
