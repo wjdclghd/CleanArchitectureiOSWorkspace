@@ -7,13 +7,21 @@
 
 import Foundation
 import SwiftUI
-import CoreDatabase
-import CoreNetwork
+//import CoreDatabase
+//import CoreNetwork
 //import AppStoreAPIModule
 //import ChatGPTAPIModule
 //import UserRecommendationModule
 
-enum AppViewFactory {
+enum HomeSceneFactory {
+//    static func homeView(coordinator: NavigationCoordinator) -> some View {
+//        HomeView(coordinator: coordinator)
+//    }
+    
+    static func homeView(coordinator: NavigationCoordinator, onLogout: @escaping () -> Void) -> some View {
+        HomeView(coordinator: coordinator, onLogout: onLogout)
+    }
+    
 //    static func mainMenuViewFactory(coordinator: NavigationCoordinator) -> some View {
 //        MainMenuView(coordinator: coordinator)
 //    }

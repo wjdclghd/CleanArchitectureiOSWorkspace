@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+enum AppEntryState {
+    case intro
+    case login
+    case home
+}
