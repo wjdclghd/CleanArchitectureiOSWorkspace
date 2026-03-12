@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+enum SessionState {
+    case firstLaunch
+    case loggedOut
+    case loggedIn
+}

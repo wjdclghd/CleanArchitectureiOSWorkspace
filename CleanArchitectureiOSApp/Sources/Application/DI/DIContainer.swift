@@ -14,6 +14,7 @@ import CoreNetwork
 //import AIModule
 
 struct DIContainer {
+    let appConfiguration: AppConfigurationProtocol
 //    let searchListUseCase: SearchListUseCaseProtocol
 //    let searchDetailListUseCase: (_ searchKeyword: String) -> SearchDetailListUseCaseProtocol
 //    let chatGPTSearchUseCase: ChatGPTSearchUseCaseProtocol
@@ -21,16 +22,14 @@ struct DIContainer {
 }
 
 extension DIContainer {
-//    static func makeDefault() -> DIContainer {
-//        let realmSwiftDBSearchList: RealmSwiftDBSearchListProtocol = try! RealmSwiftDBSearchList()
-//        
-//        let networkService: NetworkServiceProtocol = NetworkService(
-//            kakaoKey: Bundle.main.infoDictionary?["KAKAO_REST_API_KEY"] as? String
-////            let apiKey = Bundle.main.infoDictionary?["CHAT_GPT_API_KEY"] as? String
-//        )
-//        
-//        print("KAKAO_REST_API_KEY =", Bundle.main.infoDictionary?["KAKAO_REST_API_KEY"] as? String ?? "nil")
-//        
+    static func makeDefault() -> DIContainer {
+        let realmSwiftDBSearchList: RealmSwiftDBSearchListProtocol = try! RealmSwiftDBSearchList()
+        
+        let appConfiguration: AppConfigurationProtocol = DebugAppConfiguration()
+        let networkService: NetworkServiceProtocol = NetworkService(
+            apiKey: appConfiguration.kakaoRESTAPIKey
+        )
+        
 //        let searchListRepository: SearchListRepositoryProtocol = SearchListRepository(realmSwiftDBSearchListProtocol: realmSwiftDBSearchList)
 //        let searchListUseCase: SearchListUseCaseProtocol = SearchListUseCase(repository: searchListRepository)
 //        
@@ -53,12 +52,13 @@ extension DIContainer {
 //        
 //        let userRecommendationRepository: UserRecommendationRepositoryProtocol = UserRecommendationRepository(engineProtocol: userRecommendationEngine)
 //        let userRecommendationUseCase: UserRecommendationUseCaseProtocol = UserRecommendationUseCase(repository: userRecommendationRepository)
-//
-//        return DIContainer(
+
+        return DIContainer(
+            appConfiguration: appConfiguration
 //            searchListUseCase: searchListUseCase,
 //            searchDetailListUseCase: searchDetailListUseCase,
 //            chatGPTSearchUseCase: chatGPTSearchUseCase,
 //            userRecommendationUseCase: userRecommendationUseCase
-//        )
-//    }
+        )
+    }
 }

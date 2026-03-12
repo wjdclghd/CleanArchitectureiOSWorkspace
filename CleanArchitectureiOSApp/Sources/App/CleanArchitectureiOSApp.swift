@@ -10,17 +10,19 @@ import SwiftUI
 import CoreDatabase
 
 @main
-struct CleanSprintApp: App {
-//    private let container = DIContainer.makeDefault()
+struct CleanArchitectureiOSApp: App {
+    private let container: DIContainer
     
     init() {
         let migration: RealmSwiftDBMigrationProtocol = RealmSwiftDBMigration()
         migration.configuration()
+        
+        self.container = DIContainer.makeDefault()
     }
     
     var body: some Scene {
         WindowGroup {
-//            AppEntryView(container: container)
+            AppRootView(container: container)
         }
     }
 }

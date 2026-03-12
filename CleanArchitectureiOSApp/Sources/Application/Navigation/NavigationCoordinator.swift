@@ -11,14 +11,14 @@ import Navigation
 
 final class NavigationCoordinator {
     private let container: DIContainer
-    private let navigator: Navigator<AppRoute>
+    private let navigator: Navigator<NavigationRoute>
 
-    init(container: DIContainer, navigator: Navigator<AppRoute>) {
+    init(container: DIContainer, navigator: Navigator<NavigationRoute>) {
         self.container = container
         self.navigator = navigator
     }
 
-    func push(_ route: AppRoute) {
+    func push(_ route: NavigationRoute) {
         navigator.push(route)
     }
     
@@ -30,27 +30,18 @@ final class NavigationCoordinator {
         navigator.popToRoot()
     }
     
-    func present(_ route: AppRoute) {
+    func present(_ route: NavigationRoute) {
         navigator.present(route)
     }
     
     func dismiss() {
         navigator.dismiss()
     }
-
-    func pushFromAnywhere(_ route: AppRoute) {
-        navigator.push(route)
-    }
-
-//    func rootView() -> AnyView {
-//        AnyView(AppViewFactory.mainMenuViewFactory(coordinator: self))
-//    }
     
-//    func build(route: AppRoute) -> AnyView {
-//        switch route {
-//        case .main:
-//            return rootView()
-//        case .searchList:
+    func build(route: NavigationRoute) -> AnyView {
+        switch route {
+        case .searchList:
+            return AnyView(Text("Search List"))
 //            return AnyView(AppViewFactory.searchListViewFactory(container: container, coordinator: self))
 //        case .searchDetailList(let searchKeyword):
 //            return AnyView(AppViewFactory.searchDetailListViewFactory(container: container, coordinator: self, searchKeyword: searchKeyword))
@@ -60,6 +51,6 @@ final class NavigationCoordinator {
 //            return AnyView(AppViewFactory.chatGPTSearchViewFactory(container: container, coordinator: self))
 //        case .userRecommendation:
 //            return AnyView(AppViewFactory.userRecommendationViewFactory(container: container, coordinator: self))
-//        }
-//    }
+        }
+    }
 }

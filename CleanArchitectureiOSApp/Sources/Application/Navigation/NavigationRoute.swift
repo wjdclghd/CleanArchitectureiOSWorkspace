@@ -1,5 +1,5 @@
 //
-//  AppRoute.swift
+//  NavigationRoute.swift
 //  CleanArchitectureiOSApp
 //
 //  Created by jch on 12/19/25.
@@ -7,9 +7,8 @@
 
 import Foundation
 
-enum AppRoute: Hashable, Identifiable {
-    case main
-//    case searchList
+enum NavigationRoute: Hashable, Identifiable {
+    case searchList
 //    case searchDetailList(searchKeyword: String)
 //    case searchDetail(entity: SearchDetailEntity)
 //    case chatGPTSearch
@@ -17,10 +16,8 @@ enum AppRoute: Hashable, Identifiable {
     
     var id: String {
         switch self {
-        case .main:
-            return "main"
-//        case .searchList:
-//            return "searchList"
+        case .searchList:
+            return "searchList"
 //        case .searchDetailList(let keyword):
 //            return "searchDetailList-\(keyword)"
 //        case .searchDetail(let entity):
