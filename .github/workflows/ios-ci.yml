@@ -1,4 +1,4 @@
-name: iOS SearchFeatureModule CI/CD Pipeline
+name: iOS CleanArchitectureiOSWorkspace CI/CD Pipeline
 
 on:
   #push:
@@ -18,8 +18,8 @@ on:
   workflow_dispatch: {}
 
 jobs:
-  SearchFeatureModule-unit-tests:
-    name: SearchFeatureModule Unit Tests
+      cleanarchitectureiosapp-unit-tests:
+    name: CleanArchitectureiOSApp Unit Tests
     runs-on: macos-15
     env:
       FASTLANE_SKIP_CONF_PROMPT: 1
@@ -41,7 +41,7 @@ jobs:
           gem install bundler
           bundle install
 
-      - name: Run SearchFeatureModule Unit Tests
+      - name: Run CleanArchitectureiOSApp Unit Tests
         run: |
           bundle exec fastlane unit_test
 

@@ -14,8 +14,8 @@ platform :ios do
     clean_fastlane
 
     scan(
-      workspace: "../TaskProject.xcworkspace",
-      scheme: "SearchFeatureModule",
+      workspace: "../CleanArchitectureiOSWorkspace.xcworkspace",
+      scheme: "CleanArchitectureiOSApp",
       clean: true,
       code_coverage: true,
       output_directory: "fastlane/test_output",
