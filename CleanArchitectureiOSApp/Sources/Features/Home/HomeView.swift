@@ -23,8 +23,8 @@ struct HomeView: View {
             Text("Home")
                 .font(.largeTitle)
 
-            Button("Search List") {
-                coordinator.push(.searchList)
+            Button("SearchAppStore") {
+                coordinator.push(.searchAppStoreListView(searchKeyword: "네이버"))
             }
             .font(.headline)
             .foregroundStyle(.white)
