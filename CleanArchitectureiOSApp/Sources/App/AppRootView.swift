@@ -16,6 +16,6 @@ struct AppRootView: View {
     }
     
     var body: some View {
-        AppEntryView(container: container)
+        EntryFactory.appEntryView(container: container)
     }
 }

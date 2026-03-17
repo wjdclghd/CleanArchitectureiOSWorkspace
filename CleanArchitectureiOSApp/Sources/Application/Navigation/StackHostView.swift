@@ -32,7 +32,7 @@ struct StackHostView: View {
     
     var body: some View {
         NavigationStack(path: $stack.path) {
-            HomeSceneFactory.homeView(coordinator: coordinator, onLogout: onLogout)
+            HomeFactory.homeView(coordinator: coordinator, onLogout: onLogout)
                 .navigationDestination(for: NavigationRoute.self) { route in
                     coordinator.build(route: route)
                 }

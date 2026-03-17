@@ -50,7 +50,7 @@ struct LegacyHostView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                HomeSceneFactory.homeView(coordinator: coordinator, onLogout: onLogout)
+                HomeFactory.homeView(coordinator: coordinator, onLogout: onLogout)
 
                 NavigationLink(
                     destination: legacyDestination(),
@@ -87,7 +87,7 @@ struct LegacyHostView: View {
     private func legacyDestination() -> AnyView {
         guard let route = state.stack.last else {
             return AnyView(
-                HomeSceneFactory.homeView(
+                HomeFactory.homeView(
                     coordinator: coordinator,
                     onLogout: onLogout
                 )

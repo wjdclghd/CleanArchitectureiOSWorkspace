@@ -13,14 +13,10 @@ struct AppEntryView: View {
     
     @StateObject private var viewModel: AppEntryViewModel
     
-    init(container: DIContainer) {
+    init(container: DIContainer, viewModel: AppEntryViewModel) {
         self.container = container
         
-        let launchDecider = LaunchDecider()
-        let sessionState: SessionState = .loggedOut
-        self._viewModel = StateObject(
-            wrappedValue: AppEntryViewModel(launchDecider: launchDecider, sessionState: sessionState)
-        )
+        self._viewModel = StateObject(wrappedValue: viewModel)
     }
     
     var body: some View {
@@ -28,7 +24,7 @@ struct AppEntryView: View {
             switch viewModel.appEntryState {
             case .intro:
                 IntroView(
-                    onLogin: {
+                    onNext: {
                         viewModel.completeIntro()
                     }
                 )

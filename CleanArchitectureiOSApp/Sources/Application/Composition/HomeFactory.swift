@@ -1,5 +1,5 @@
 //
-//  AppViewFactory.swift
+//  HomeFactory.swift
 //  CleanArchitectureiOSApp
 //
 //  Created by jch on 12/19/25.
@@ -13,7 +13,7 @@ import SwiftUI
 //import ChatGPTAPIModule
 //import UserRecommendationModule
 
-enum HomeSceneFactory {
+enum HomeFactory {
 //    static func homeView(coordinator: NavigationCoordinator) -> some View {
 //        HomeView(coordinator: coordinator)
 //    }
