@@ -15,6 +15,8 @@ import CoreNetwork
 
 struct DIContainer {
     let appConfiguration: AppConfigurationProtocol
+    let sessionState: SessionProtocol
+    let launchDecider: LaunchDecider
 //    let searchListUseCase: SearchListUseCaseProtocol
 //    let searchDetailListUseCase: (_ searchKeyword: String) -> SearchDetailListUseCaseProtocol
 //    let chatGPTSearchUseCase: ChatGPTSearchUseCaseProtocol
@@ -23,9 +25,15 @@ struct DIContainer {
 
 extension DIContainer {
     static func makeDefault() -> DIContainer {
+        let appConfiguration: AppConfigurationProtocol = DebugAppConfiguration()
+        let sessionState: SessionProtocol = UserDefaultsSession(
+            userDefaults: .standard,
+            isIntroEnabled: false
+        )
+        let launchDecider = LaunchDecider()
+        
         let realmSwiftDBSearchList: RealmSwiftDBSearchListProtocol = try! RealmSwiftDBSearchList()
         
-        let appConfiguration: AppConfigurationProtocol = DebugAppConfiguration()
         let networkService: NetworkServiceProtocol = NetworkService(
             apiKey: appConfiguration.kakaoRESTAPIKey
         )
@@ -54,7 +62,9 @@ extension DIContainer {
 //        let userRecommendationUseCase: UserRecommendationUseCaseProtocol = UserRecommendationUseCase(repository: userRecommendationRepository)
 
         return DIContainer(
-            appConfiguration: appConfiguration
+            appConfiguration: appConfiguration,
+            sessionState: sessionState,
+            launchDecider: launchDecider
 //            searchListUseCase: searchListUseCase,
 //            searchDetailListUseCase: searchDetailListUseCase,
 //            chatGPTSearchUseCase: chatGPTSearchUseCase,

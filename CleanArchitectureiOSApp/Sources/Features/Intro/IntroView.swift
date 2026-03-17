@@ -1,5 +1,5 @@
 //
-//  AppRootView.swift
+//  IntroView.swift
 //  CleanArchitectureiOSApp
 //
 //  Created by jch on 3/11/26.
@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct IntroView: View {
-    let onLogin: () -> Void
+    let onNext: () -> Void
     
     var body: some View {
         VStack(spacing: 20) {
@@ -17,7 +17,7 @@ struct IntroView: View {
                 .font(.largeTitle)
             
             Button("Login") {
-                onLogin()
+                onNext()
             }
             .font(.headline)
             .foregroundStyle(.white)
