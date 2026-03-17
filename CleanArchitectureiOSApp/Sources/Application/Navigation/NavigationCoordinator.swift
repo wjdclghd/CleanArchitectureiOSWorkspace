@@ -40,9 +40,8 @@ final class NavigationCoordinator {
     
     func build(route: NavigationRoute) -> AnyView {
         switch route {
-        case .searchList:
-            return AnyView(Text("Search List"))
-//            return AnyView(AppViewFactory.searchListViewFactory(container: container, coordinator: self))
+        case .searchAppStoreListView(let searchKeyword):
+            return AnyView(SearchAppStoreFactory.searchAppStoreListView(searchKeyword: searchKeyword, coordinator: self))
 //        case .searchDetailList(let searchKeyword):
 //            return AnyView(AppViewFactory.searchDetailListViewFactory(container: container, coordinator: self, searchKeyword: searchKeyword))
 //        case .searchDetail(let entity):
