@@ -9,9 +9,39 @@ import Foundation
 import SwiftUI
 
 enum SearchAppStoreFactory {
-    static func searchAppStoreListView(searchKeyword: String, coordinator: NavigationCoordinator) -> some View {
-        let viewModel = SearchAppStoreListViewModel(searchKeyword: searchKeyword)
+    static func searchAppStoreListView(
+        container: DIContainer,
+        coordinator: NavigationCoordinator,
+        searchKeyword: String
+    ) -> some View {
+        let viewModel = SearchAppStoreListViewModel(
+            useCase: container.searchAppStoreListUseCase,
+            searchKeyword: searchKeyword
+        )
         
-        return SearchAppStoreListView(viewModel: viewModel)
+        return SearchAppStoreListView(
+            viewModel: viewModel,
+            onSelectItem: { item in
+                coordinator.push(.searchAppStoreDetailView(trackId: item.trackId))
+            }
+        )
+    }
+    
+    static func searchAppStoreDetailView(
+        container: DIContainer,
+        coordinator: NavigationCoordinator,
+        trackId: Int
+    ) -> some View {
+        let viewModel = SearchAppStoreDetailViewModel(
+            useCase: container.searchAppStoreDetailUseCase,
+            trackId: trackId
+        )
+        
+        return SearchAppStoreDetailView(
+            viewModel: viewModel,
+            onBack: {
+                coordinator.pop()
+            }
+        )
     }
 }

@@ -9,23 +9,14 @@ import Foundation
 
 enum NavigationRoute: Hashable, Identifiable {
     case searchAppStoreListView(searchKeyword: String)
-//    case searchDetailList(searchKeyword: String)
-//    case searchDetail(entity: SearchDetailEntity)
-//    case chatGPTSearch
-//    case userRecommendation
+    case searchAppStoreDetailView(trackId: Int)
     
     var id: String {
         switch self {
         case .searchAppStoreListView(let searchKeyword):
-            return "searchAppStoreListView"
-//        case .searchDetailList(let keyword):
-//            return "searchDetailList-\(keyword)"
-//        case .searchDetail(let entity):
-//            return "searchDetail-\(SearchDetailEntity)"
-//        case .chatGPTSearch:
-//            return "chatGPTSearch"
-//        case .userRecommendation:
-//            return "userRecommendation"
+            return "searchAppStoreListView-\(searchKeyword)"
+        case .searchAppStoreDetailView(let trackId):
+            return "searchAppStoreDetailView-\(trackId)"
         }
     }
 }

@@ -8,19 +8,13 @@
 import Foundation
 import CoreDatabase
 import CoreNetwork
-//import AppStoreAPIModule
-//import ChatGPTAPIModule
-//import UserRecommendationModule
-//import AIModule
 
 struct DIContainer {
     let appConfiguration: AppConfigurationProtocol
     let sessionState: SessionProtocol
     let launchDecider: LaunchDecider
-//    let searchListUseCase: SearchListUseCaseProtocol
-//    let searchDetailListUseCase: (_ searchKeyword: String) -> SearchDetailListUseCaseProtocol
-//    let chatGPTSearchUseCase: ChatGPTSearchUseCaseProtocol
-//    let userRecommendationUseCase: UserRecommendationUseCaseProtocol
+    let searchAppStoreListUseCase: SearchAppStoreListUseCaseProtocol
+    let searchAppStoreDetailUseCase: SearchAppStoreDetailUseCaseProtocol
 }
 
 extension DIContainer {
@@ -38,37 +32,18 @@ extension DIContainer {
             apiKey: appConfiguration.kakaoRESTAPIKey
         )
         
-//        let searchListRepository: SearchListRepositoryProtocol = SearchListRepository(realmSwiftDBSearchListProtocol: realmSwiftDBSearchList)
-//        let searchListUseCase: SearchListUseCaseProtocol = SearchListUseCase(repository: searchListRepository)
-//        
-//        let searchDetailListUseCase: (_ searchKeyword: String) -> SearchDetailListUseCaseProtocol = { searchKeyword in
-//            let searchDetailListRepository: SearchDetailListRepositoryProtocol = SearchDetailListRepository(networkServiceProtocol: networkService)
-//            
-//            return SearchDetailListUseCase(repository: searchDetailListRepository)
-//        }
-//        
-//        let chatGPTSearchRepository: ChatGPTSearchRepositoryProtocol = ChatGPTSearchRepository(networkServiceProtocol: networkService)
-//        let chatGPTSearchUseCase: ChatGPTSearchUseCaseProtocol = ChatGPTSearchUseCase(repository: chatGPTSearchRepository)
-//        
-//        let userRecommendationEngine: UserRecommendationEngineProtocol
-//        
-//        do {
-//            userRecommendationEngine = try UserRecommendationEngine()
-//        } catch {
-//            fatalError("UserRecommendationEngine 초기화 실패: \(error)")
-//        }
-//        
-//        let userRecommendationRepository: UserRecommendationRepositoryProtocol = UserRecommendationRepository(engineProtocol: userRecommendationEngine)
-//        let userRecommendationUseCase: UserRecommendationUseCaseProtocol = UserRecommendationUseCase(repository: userRecommendationRepository)
+        let searchAppStoreListRepository: SearchAppStoreListRepositoryProtocol = SearchAppStoreListRepository(networkServiceProtocol: networkService)
+        let searchAppStoreListUseCase: SearchAppStoreListUseCaseProtocol = SearchAppStoreListUseCase(repository: searchAppStoreListRepository)
+        
+        let searchAppStoreDetailRepository: SearchAppStoreDetailRepositoryProtocol = SearchAppStoreDetailRepository(networkServiceProtocol: networkService)
+        let searchAppStoreDetailUseCase: SearchAppStoreDetailUseCaseProtocol = SearchAppStoreDetailUseCase(repository: searchAppStoreDetailRepository)
 
         return DIContainer(
             appConfiguration: appConfiguration,
             sessionState: sessionState,
-            launchDecider: launchDecider
-//            searchListUseCase: searchListUseCase,
-//            searchDetailListUseCase: searchDetailListUseCase,
-//            chatGPTSearchUseCase: chatGPTSearchUseCase,
-//            userRecommendationUseCase: userRecommendationUseCase
+            launchDecider: launchDecider,
+            searchAppStoreListUseCase: searchAppStoreListUseCase,
+            searchAppStoreDetailUseCase: searchAppStoreDetailUseCase
         )
     }
 }
