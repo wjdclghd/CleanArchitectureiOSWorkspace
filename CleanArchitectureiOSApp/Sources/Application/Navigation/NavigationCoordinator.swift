@@ -41,15 +41,20 @@ final class NavigationCoordinator {
     func build(route: NavigationRoute) -> AnyView {
         switch route {
         case .searchAppStoreListView(let searchKeyword):
-            return AnyView(SearchAppStoreFactory.searchAppStoreListView(searchKeyword: searchKeyword, coordinator: self))
-//        case .searchDetailList(let searchKeyword):
-//            return AnyView(AppViewFactory.searchDetailListViewFactory(container: container, coordinator: self, searchKeyword: searchKeyword))
-//        case .searchDetail(let entity):
-//            return AnyView(AppViewFactory.searchDetailViewFactory(coordinator: self, entity: entity))
-//        case .chatGPTSearch:
-//            return AnyView(AppViewFactory.chatGPTSearchViewFactory(container: container, coordinator: self))
-//        case .userRecommendation:
-//            return AnyView(AppViewFactory.userRecommendationViewFactory(container: container, coordinator: self))
+            return AnyView(
+                SearchAppStoreFactory.searchAppStoreListView(
+                    container: container,
+                    coordinator: self,
+                    searchKeyword: searchKeyword
+                )
+            )
+        case .searchAppStoreDetailView(let trackId):
+            return AnyView(
+                SearchAppStoreFactory.searchAppStoreDetailView(
+                    container: container,
+                    coordinator: self,
+                    trackId: trackId)
+            )
         }
     }
 }
