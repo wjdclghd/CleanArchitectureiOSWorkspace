@@ -9,5 +9,5 @@ import Foundation
 import Combine
 
 protocol SearchAppStoreListUseCaseProtocol{
-    func execute(searchKeyword: String) -> AnyPublisher<[SearchAppStoreListEntity], Error>
+    func execute(searchKeyword: String) async throws -> [SearchAppStoreListEntity]
 }

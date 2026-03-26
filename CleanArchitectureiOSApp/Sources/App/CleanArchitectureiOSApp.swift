@@ -7,15 +7,15 @@
 
 import Foundation
 import SwiftUI
-import CoreDatabase
+//import Persistence
 
 @main
 struct CleanArchitectureiOSApp: App {
     private let container: DIContainer
     
     init() {
-        let migration: RealmSwiftDBMigrationProtocol = RealmSwiftDBMigration()
-        migration.configuration()
+//        let migration: RealmSwiftDBMigrationProtocol = RealmSwiftDBMigration()
+//        migration.configuration()
         
         self.container = DIContainer.makeDefault()
     }

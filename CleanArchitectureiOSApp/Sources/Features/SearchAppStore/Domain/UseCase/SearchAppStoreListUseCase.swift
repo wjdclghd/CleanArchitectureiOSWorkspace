@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Combine
 
 final class SearchAppStoreListUseCase: SearchAppStoreListUseCaseProtocol {
     private let repository: SearchAppStoreListRepositoryProtocol
@@ -15,15 +14,13 @@ final class SearchAppStoreListUseCase: SearchAppStoreListUseCaseProtocol {
         self.repository = repository
     }
 
-    func execute(searchKeyword: String) -> AnyPublisher<[SearchAppStoreListEntity], Error> {
-        let trimmed = searchKeyword.trimmingCharacters(in: .whitespaces)
-        
+    func execute(searchKeyword: String) async throws -> [SearchAppStoreListEntity] {
+        let trimmed = searchKeyword.trimmingCharacters(in: .whitespacesAndNewlines)
+
         guard !trimmed.isEmpty else {
-            return Just([])
-                .setFailureType(to: Error.self)
-                .eraseToAnyPublisher()
+            return []
         }
-        
-        return repository.fetchSearchAppStoreListResults(searchKeyword: trimmed)
+
+        return try await repository.fetchSearchAppStoreList(searchKeyword: trimmed)
     }
 }

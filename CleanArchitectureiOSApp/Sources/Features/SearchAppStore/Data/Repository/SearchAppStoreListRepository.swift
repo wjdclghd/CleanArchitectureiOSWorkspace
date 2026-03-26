@@ -6,26 +6,19 @@
 //
 
 import Foundation
-import Combine
-import CoreNetwork
 
 final class SearchAppStoreListRepository: SearchAppStoreListRepositoryProtocol {
-    private let networkServiceProtocol: NetworkServiceProtocol
+    private let dataSource: AppStoreDataSourceProtocol
 
-    init(networkServiceProtocol: NetworkServiceProtocol) {
-        self.networkServiceProtocol = networkServiceProtocol
+    init(dataSource: AppStoreDataSourceProtocol) {
+        self.dataSource = dataSource
     }
 
-    func fetchSearchAppStoreListResults(searchKeyword: String) -> AnyPublisher<[SearchAppStoreListEntity], Error> {
-        networkServiceProtocol.request(
-            .searchDetailList(searchKeyword: searchKeyword), type: SearchAppStoreResponseDTO.self
-        )
-        .map { response in
-            response.results.map {
-                SearchAppStoreDTOMapper.toListItemEntity(from: $0)
-            }
+    func fetchSearchAppStoreList(searchKeyword: String) async throws -> [SearchAppStoreListEntity] {
+        let response = try await dataSource.fetchSearchAppStoreListResults(searchKeyword: searchKeyword)
+
+        return response.results.map {
+            SearchAppStoreDTOMapper.toListItemEntity(from: $0)
         }
-        .mapError { $0 as Error }
-        .eraseToAnyPublisher()
     }
 }

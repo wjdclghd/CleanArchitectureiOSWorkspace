@@ -6,8 +6,7 @@
 //
 
 import Foundation
-import Combine
 
 protocol SearchAppStoreDetailRepositoryProtocol {
-    func fetchSearchAppStoreDetail(trackId: Int) -> AnyPublisher<SearchAppStoreDetailEntity, Error>
+    func fetchSearchAppStoreDetail(trackId: Int) async throws -> SearchAppStoreDetailEntity
 }

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Combine
 
 final class SearchAppStoreDetailUseCase: SearchAppStoreDetailUseCaseProtocol {
     private let repository: SearchAppStoreDetailRepositoryProtocol
@@ -15,7 +14,7 @@ final class SearchAppStoreDetailUseCase: SearchAppStoreDetailUseCaseProtocol {
         self.repository = repository
     }
     
-    func execute(trackId: Int) -> AnyPublisher<SearchAppStoreDetailEntity, any Error> {
-        repository.fetchSearchAppStoreDetail(trackId: trackId)
+    func execute(trackId: Int) async throws -> SearchAppStoreDetailEntity {
+        try await repository.fetchSearchAppStoreDetail(trackId: trackId)
     }
 }

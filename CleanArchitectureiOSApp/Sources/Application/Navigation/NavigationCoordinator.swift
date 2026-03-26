@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import Navigation
 
+@MainActor
 final class NavigationCoordinator {
     private let container: DIContainer
     private let navigator: Navigator<NavigationRoute>
