@@ -115,3 +115,9 @@ vendor/
 # Injection / temp
 # =========================
 iOSInjectionProject/
+
+# =========================
+# Planning / docs
+# =========================
+**/plan.md
+**/research.md

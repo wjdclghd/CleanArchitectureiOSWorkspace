@@ -43,10 +43,9 @@ let project = Project(
         .glob(pattern: "Sources/Resources/**")
       ],
       dependencies: [
-//        .external(name: "SearchFeatureModule"),
         .external(name: "Navigation"),
-        .external(name: "CoreDatabase"),
-        .external(name: "CoreNetwork")
+        .external(name: "Networking"),
+        .external(name: "Persistence")
       ],
       settings: appTargetSettings
     ),

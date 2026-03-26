@@ -15,10 +15,10 @@ let package = Package(
         .iOS(.v15)
     ],
     dependencies: [
-//        .package(path: "../SearchFeatureModule"),
-        .package(path: "../Modules/CoreModule"),
         .package(path: "../Modules/Navigation"),
-        .package(url: "https://github.com/realm/realm-swift.git", .upToNextMajor(from: "10.47.0")),
-        .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.9.1"))
+        .package(path: "../Modules/Networking"),
+        .package(path: "../Modules/Persistence"),
+        .package(url: "https://github.com/realm/realm-swift.git", .upToNextMajor(from: "20.0.4")),
+        .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.11.1"))
     ]
 )
