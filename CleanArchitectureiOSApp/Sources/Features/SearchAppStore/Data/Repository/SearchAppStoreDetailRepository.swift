@@ -6,29 +6,22 @@
 //
 
 import Foundation
-import Combine
-import CoreNetwork
-/*
+import Networking
+
 final class SearchAppStoreDetailRepository: SearchAppStoreDetailRepositoryProtocol {
-    private let networkService: NetworkService
-    
-    init(networkService: NetworkService) {
-        self.networkService = networkService
+    private let dataSource: AppStoreDataSourceProtocol
+
+    init(dataSource: AppStoreDataSourceProtocol) {
+        self.dataSource = dataSource
     }
-    
-    func fetchSearchAppStoreDetail(trackId: Int) -> AnyPublisher<SearchAppStoreDetailEntity, any Error> {
-        networkService.request(
-            .searchDetail(trackId: trackId), type: SearchAppStoreResponseDTO.self
-        )
-        .tryMap { response in
-            guard let entity = response.results.first else {
-                throw NSError(domain: "SearchAppStoreDetailRepository", code: -1)
-            }
-            
-            return SearchAppStoreDTOMapper.toDetailEntity(from: entity)
+
+    func fetchSearchAppStoreDetail(trackId: Int) async throws -> SearchAppStoreDetailEntity {
+        let response = try await dataSource.fetchSearchAppStoreDetailResults(trackId: trackId)
+
+        guard let item = response.results.first else {
+            throw NetworkError.emptyResponse
         }
-        .mapError { $0 as Error }
-        .eraseToAnyPublisher()
+
+        return SearchAppStoreDTOMapper.toDetailEntity(from: item)
     }
 }
-*/

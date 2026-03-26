@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import CoreDatabase
-import CoreNetwork
+import Networking
+//import Persistence
 
 struct DIContainer {
     let appConfiguration: AppConfigurationProtocol
@@ -26,16 +26,21 @@ extension DIContainer {
         )
         let launchDecider = LaunchDecider()
         
-        let realmSwiftDBSearchList: RealmSwiftDBSearchListProtocol = try! RealmSwiftDBSearchList()
+//        let realmSwiftDBSearchList: RealmSwiftDBSearchListProtocol = try! RealmSwiftDBSearchList()
         
-        let networkService: NetworkServiceProtocol = NetworkService(
-            apiKey: appConfiguration.kakaoRESTAPIKey
+        let requestBuilder = NetworkRequestBuilder()
+        let networkClient: NetworkClientProtocol = URLSessionNetworkClient(
+            requestBuilder: requestBuilder
         )
         
-        let searchAppStoreListRepository: SearchAppStoreListRepositoryProtocol = SearchAppStoreListRepository(networkServiceProtocol: networkService)
+        let appStoreDataSource: AppStoreDataSourceProtocol = AppStoreDataSource(
+            networkClient: networkClient
+        )
+        
+        let searchAppStoreListRepository: SearchAppStoreListRepositoryProtocol = SearchAppStoreListRepository(dataSource: appStoreDataSource)
         let searchAppStoreListUseCase: SearchAppStoreListUseCaseProtocol = SearchAppStoreListUseCase(repository: searchAppStoreListRepository)
         
-        let searchAppStoreDetailRepository: SearchAppStoreDetailRepositoryProtocol = SearchAppStoreDetailRepository(networkServiceProtocol: networkService)
+        let searchAppStoreDetailRepository: SearchAppStoreDetailRepositoryProtocol = SearchAppStoreDetailRepository(dataSource: appStoreDataSource)
         let searchAppStoreDetailUseCase: SearchAppStoreDetailUseCaseProtocol = SearchAppStoreDetailUseCase(repository: searchAppStoreDetailRepository)
 
         return DIContainer(

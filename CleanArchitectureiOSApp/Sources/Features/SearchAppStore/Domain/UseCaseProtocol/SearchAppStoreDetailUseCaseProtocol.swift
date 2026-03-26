@@ -9,5 +9,5 @@ import Foundation
 import Combine
 
 protocol SearchAppStoreDetailUseCaseProtocol {
-    func execute(trackId: Int) -> AnyPublisher<SearchAppStoreDetailEntity, Error>
+    func execute(trackId: Int) async throws -> SearchAppStoreDetailEntity
 }

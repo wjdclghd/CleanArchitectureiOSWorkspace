@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 
+@MainActor
 final class SearchAppStoreDetailViewModel: ObservableObject {
     @Published private(set) var searchAppStoreDetailEntity: SearchAppStoreDetailEntity?
     @Published private(set) var isLoading: Bool = false
@@ -15,7 +16,7 @@ final class SearchAppStoreDetailViewModel: ObservableObject {
 
     private let useCase: SearchAppStoreDetailUseCaseProtocol
     private let trackId: Int
-    private var cancellables = Set<AnyCancellable>()
+    private var fetchTask: Task<Void, Never>?
 
     init(
         useCase: SearchAppStoreDetailUseCaseProtocol,
@@ -23,30 +24,39 @@ final class SearchAppStoreDetailViewModel: ObservableObject {
     ) {
         self.useCase = useCase
         self.trackId = trackId
-        
+
         fetchDetail()
     }
 
+    deinit {
+        fetchTask?.cancel()
+    }
+
     func fetchDetail() {
-        isLoading = true
-        errorMessage = nil
+        fetchTask?.cancel()
 
-        useCase.execute(trackId: trackId)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] completion in
-                guard let self else {
-                    return
-                }
-                
+        fetchTask = Task { [weak self] in
+            guard let self else { return }
+
+            self.isLoading = true
+            self.errorMessage = nil
+
+            do {
+                let entity = try await self.useCase.execute(trackId: self.trackId)
+
+                if Task.isCancelled { return }
+
+                self.searchAppStoreDetailEntity = entity
                 self.isLoading = false
+            } catch is CancellationError {
+                self.isLoading = false
+            } catch {
+                if Task.isCancelled { return }
 
-                if case let .failure(error) = completion {
-                    self.errorMessage = error.localizedDescription
-                    self.searchAppStoreDetailEntity = nil
-                }
-            } receiveValue: { [weak self] entity in
-                self?.searchAppStoreDetailEntity = entity
+                self.searchAppStoreDetailEntity = nil
+                self.errorMessage = error.localizedDescription
+                self.isLoading = false
             }
-            .store(in: &cancellables)
+        }
     }
 }

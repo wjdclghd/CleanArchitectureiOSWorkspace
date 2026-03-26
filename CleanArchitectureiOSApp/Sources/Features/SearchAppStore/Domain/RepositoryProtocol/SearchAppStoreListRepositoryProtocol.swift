@@ -9,5 +9,5 @@ import Foundation
 import Combine
 
 protocol SearchAppStoreListRepositoryProtocol {
-    func fetchSearchAppStoreListResults(searchKeyword: String) -> AnyPublisher<[SearchAppStoreListEntity], Error>
+    func fetchSearchAppStoreList(searchKeyword: String) async throws -> [SearchAppStoreListEntity]
 }

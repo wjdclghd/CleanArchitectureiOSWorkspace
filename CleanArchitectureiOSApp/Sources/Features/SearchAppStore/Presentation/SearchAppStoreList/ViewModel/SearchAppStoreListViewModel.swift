@@ -6,44 +6,51 @@
 //
 
 import Foundation
-import SwiftUI
-
 import Combine
 
+@MainActor
 final class SearchAppStoreListViewModel: ObservableObject {
     @Published private(set) var searchAppStoreListEntity: [SearchAppStoreListEntity] = []
     @Published private(set) var isLoading: Bool = false
     @Published private(set) var errorMessage: String?
 
     private let useCase: SearchAppStoreListUseCaseProtocol
-    private var cancellables = Set<AnyCancellable>()
+    private var fetchTask: Task<Void, Never>?
 
     init(useCase: SearchAppStoreListUseCaseProtocol, searchKeyword: String) {
         self.useCase = useCase
-        
         fetchResults(searchKeyword: searchKeyword)
     }
 
+    deinit {
+        fetchTask?.cancel()
+    }
+
     func fetchResults(searchKeyword: String) {
-        isLoading = true
-        errorMessage = nil
-        
-        useCase.execute(searchKeyword: searchKeyword)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] completion in
-                guard let self else {
-                    return
-                }
-                
+        fetchTask?.cancel()
+
+        fetchTask = Task { [weak self] in
+            guard let self else { return }
+
+            self.isLoading = true
+            self.errorMessage = nil
+
+            do {
+                let entity = try await self.useCase.execute(searchKeyword: searchKeyword)
+
+                if Task.isCancelled { return }
+
+                self.searchAppStoreListEntity = entity
                 self.isLoading = false
-                
-                if case let .failure(error) = completion {
-                    self.errorMessage = error.localizedDescription
-                    self.searchAppStoreListEntity = []
-                }
-            } receiveValue: { [weak self] entity in
-                self?.searchAppStoreListEntity = entity
+            } catch is CancellationError {
+                self.isLoading = false
+            } catch {
+                if Task.isCancelled { return }
+
+                self.searchAppStoreListEntity = []
+                self.errorMessage = error.localizedDescription
+                self.isLoading = false
             }
-            .store(in: &cancellables)
+        }
     }
 }
