@@ -45,7 +45,8 @@ let project = Project(
       dependencies: [
         .external(name: "Navigation"),
         .external(name: "Networking"),
-        .external(name: "Persistence")
+        .external(name: "Persistence"),
+        .external(name: "SearchEngine")
       ],
       settings: appTargetSettings
     ),
