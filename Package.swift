@@ -15,9 +15,15 @@ let package = Package(
         .iOS(.v15)
     ],
     dependencies: [
+        .package(path: "../FeatureModules/FeatureSearchAppStore"),
+        
+        .package(path: "../Modules/AppDomain"),
+        .package(path: "../Modules/AppData"),
+        
         .package(path: "../Modules/Navigation"),
         .package(path: "../Modules/Networking"),
         .package(path: "../Modules/Persistence"),
-        .package(path: "../Modules/SearchEngine")
+        .package(path: "../Modules/SearchEngine"),
+        .package(path: "../Modules/DesignSystem")
     ]
 )

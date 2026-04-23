@@ -43,10 +43,16 @@ let project = Project(
         .glob(pattern: "Sources/Resources/**")
       ],
       dependencies: [
+        .external(name: "FeatureSearchAppStore"),
+        
+        .external(name: "AppDomain"),
+        .external(name: "AppData"),
+        
         .external(name: "Navigation"),
         .external(name: "Networking"),
         .external(name: "Persistence"),
-        .external(name: "SearchEngine")
+        .external(name: "SearchEngine"),
+        .external(name: "DesignSystem")
       ],
       settings: appTargetSettings
     ),
