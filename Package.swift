@@ -15,15 +15,22 @@ let package = Package(
         .iOS(.v15)
     ],
     dependencies: [
-        .package(path: "../FeatureModules/FeatureSearchAppStore"),
+        .package(path: "../Modules/Features/FeatureIntro"),
+        .package(path: "../Modules/Features/FeatureHome"),
+        .package(path: "../Modules/Features/FeatureLogin"),
+        .package(path: "../Modules/Features/FeatureMyPage"),
+        .package(path: "../Modules/Features/FeatureSetting"),
         
-        .package(path: "../Modules/AppDomain"),
-        .package(path: "../Modules/AppData"),
+        .package(path: "../Modules/Features/FeatureSearch"),
+        .package(path: "../Modules/Features/FeatureSearchAppStore"),
         
-        .package(path: "../Modules/Navigation"),
-        .package(path: "../Modules/Networking"),
-        .package(path: "../Modules/Persistence"),
-        .package(path: "../Modules/SearchEngine"),
-        .package(path: "../Modules/DesignSystem")
+        .package(path: "../Modules/Shared/AppDomain"),
+        .package(path: "../Modules/Shared/AppData"),
+        
+        .package(path: "../Modules/Core/Navigation"),
+        .package(path: "../Modules/Core/Infrastructure/Networking"),
+        .package(path: "../Modules/Core/Infrastructure/Persistence"),
+        .package(path: "../Modules/Core/Infrastructure/SearchEngine"),
+        .package(path: "../Modules/Core/UI/DesignSystem")
     ]
 )

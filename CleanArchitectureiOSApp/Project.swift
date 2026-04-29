@@ -43,6 +43,13 @@ let project = Project(
         .glob(pattern: "Sources/Resources/**")
       ],
       dependencies: [
+        .external(name: "FeatureIntro"),
+        .external(name: "FeatureHome"),
+        .external(name: "FeatureLogin"),
+        .external(name: "FeatureMyPage"),
+        .external(name: "FeatureSetting"),
+        
+        .external(name: "FeatureSearch"),
         .external(name: "FeatureSearchAppStore"),
         
         .external(name: "AppDomain"),
