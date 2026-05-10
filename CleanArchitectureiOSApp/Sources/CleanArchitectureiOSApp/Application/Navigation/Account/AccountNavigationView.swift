@@ -8,9 +8,10 @@
 import SwiftUI
 import Navigation
 
+/// iOS 버전에 따라 NavigationStack 또는 NavigationView를 선택하여 Account 화면 흐름을 구성합니다.
 struct AccountNavigationView: View {
     private let container: DIContainer
-    
+
     @ObservedObject private var sessionController: SessionController
 
     init(container: DIContainer, sessionController: SessionController) {
@@ -39,9 +40,9 @@ struct AccountNavigationView: View {
 private struct AccountStackNavigationView: View {
     private let routeBuilder: AccountRouteBuilder
     private let accountNavigator: AccountNavigator
-    
+
     @ObservedObject private var sessionController: SessionController
-    
+
     @StateObject private var stack: StackNavigator<AccountRoute>
 
     init(container: DIContainer, sessionController: SessionController) {
@@ -116,62 +117,35 @@ private struct AccountStackNavigationView: View {
 
 private struct AccountLegacyNavigationView: View {
     private let routeBuilder: AccountRouteBuilder
-    private let accountNavigator: AccountNavigator
 
     @ObservedObject private var sessionController: SessionController
-    
-    @StateObject private var state: AccountLegacyNavigationState
+
+    @StateObject private var controller: AccountLegacyNavigationController
 
     init(container: DIContainer, sessionController: SessionController) {
         self._sessionController = ObservedObject(wrappedValue: sessionController)
         self.routeBuilder = AccountRouteBuilder()
-
-        let navigationState = AccountLegacyNavigationState()
-        self._state = StateObject(wrappedValue: navigationState)
-
-        let legacy = LegacyNavigator<AccountRoute>(
-            push: { route in
-                navigationState.stack.append(route)
-            },
-            pop: {
-                _ = navigationState.stack.popLast()
-            },
-            popToRoot: {
-                navigationState.stack.removeAll()
-            },
-            replace: { routes in
-                navigationState.stack = routes
-            },
-            popTo: { route in
-                guard let index = navigationState.stack.lastIndex(of: route) else { return }
-                navigationState.stack = Array(navigationState.stack.prefix(through: index))
-            },
-            present: { route, style in
-                navigationState.presentationItem = PresentationItem(route: route, style: style)
-            },
-            dismiss: {
-                navigationState.presentationItem = nil
-            }
-        )
-        self.accountNavigator = AccountNavigator(navigator: Navigator(legacy))
+        self._controller = StateObject(wrappedValue: AccountLegacyNavigationController())
     }
 
     var body: some View {
+        let navigator = AccountNavigator(navigator: controller.navigator)
+
         NavigationView {
             ZStack {
                 routeBuilder.makeRootView(
                     loginState: sessionController.loginState,
                     sessionController: sessionController,
-                    navigator: accountNavigator
+                    navigator: navigator
                 )
 
                 NavigationLink(
-                    destination: legacyDestination(),
+                    destination: legacyDestination(navigator: navigator),
                     isActive: Binding(
-                        get: { !state.stack.isEmpty },
+                        get: { !controller.stack.isEmpty },
                         set: { isActive in
                             if !isActive {
-                                _ = state.stack.popLast()
+                                _ = controller.stack.popLast()
                             }
                         }
                     )
@@ -182,12 +156,12 @@ private struct AccountLegacyNavigationView: View {
             }
         }
         .onChange(of: sessionController.loginState) { _ in
-            state.stack.removeAll()
+            controller.stack.removeAll()
         }
         .sheet(
             item: Binding<PresentationItem<AccountRoute>?>(
                 get: {
-                    guard let item = state.presentationItem,
+                    guard let item = controller.presentationItem,
                           item.style != .fullScreenCover else {
                         return nil
                     }
@@ -195,17 +169,17 @@ private struct AccountLegacyNavigationView: View {
                 },
                 set: { newValue, _ in
                     if newValue == nil {
-                        state.presentationItem = nil
+                        controller.presentationItem = nil
                     }
                 }
             )
         ) { item in
-            routeBuilder.build(item.route, navigator: accountNavigator)
+            routeBuilder.build(item.route, navigator: navigator)
         }
         .fullScreenCover(
             item: Binding<PresentationItem<AccountRoute>?>(
                 get: {
-                    guard let item = state.presentationItem,
+                    guard let item = controller.presentationItem,
                           item.style == .fullScreenCover else {
                         return nil
                     }
@@ -213,24 +187,54 @@ private struct AccountLegacyNavigationView: View {
                 },
                 set: { newValue, _ in
                     if newValue == nil {
-                        state.presentationItem = nil
+                        controller.presentationItem = nil
                     }
                 }
             )
         ) { item in
-            routeBuilder.build(item.route, navigator: accountNavigator)
+            routeBuilder.build(item.route, navigator: navigator)
         }
     }
 
-    private func legacyDestination() -> AnyView {
-        guard let route = state.stack.last else {
+    private func legacyDestination(navigator: AccountNavigator) -> AnyView {
+        guard let route = controller.stack.last else {
             return AnyView(EmptyView())
         }
-        return routeBuilder.build(route, navigator: accountNavigator)
+        return routeBuilder.build(route, navigator: navigator)
     }
 }
 
-private final class AccountLegacyNavigationState: ObservableObject {
+@MainActor
+private final class AccountLegacyNavigationController: ObservableObject {
     @Published var stack: [AccountRoute] = []
     @Published var presentationItem: PresentationItem<AccountRoute>?
+
+    private(set) lazy var navigator: Navigator<AccountRoute> = {
+        let legacy = LegacyNavigator<AccountRoute>(
+            push: { [weak self] route in
+                self?.stack.append(route)
+            },
+            pop: { [weak self] in
+                _ = self?.stack.popLast()
+            },
+            popToRoot: { [weak self] in
+                self?.stack.removeAll()
+            },
+            replace: { [weak self] routes in
+                self?.stack = routes
+            },
+            popTo: { [weak self] route in
+                guard let self,
+                      let index = self.stack.lastIndex(of: route) else { return }
+                self.stack = Array(self.stack.prefix(through: index))
+            },
+            present: { [weak self] route, style in
+                self?.presentationItem = PresentationItem(route: route, style: style)
+            },
+            dismiss: { [weak self] in
+                self?.presentationItem = nil
+            }
+        )
+        return Navigator(legacy)
+    }()
 }

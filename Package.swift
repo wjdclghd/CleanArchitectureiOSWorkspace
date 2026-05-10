@@ -31,6 +31,8 @@ let package = Package(
         .package(path: "../Modules/Core/Infrastructure/Networking"),
         .package(path: "../Modules/Core/Infrastructure/Persistence"),
         .package(path: "../Modules/Core/Infrastructure/SearchEngine"),
+        .package(path: "../Modules/Core/Infrastructure/ImagePipeline"),
+        .package(path: "../Modules/Core/UI/UIComponents"),
         .package(path: "../Modules/Core/UI/DesignSystem")
     ]
 )

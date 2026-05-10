@@ -8,6 +8,7 @@
 import SwiftUI
 import Navigation
 
+/// iOS 버전에 따라 NavigationStack 또는 NavigationView를 선택하여 Home 화면 흐름을 구성합니다.
 struct HomeNavigationView: View {
     private let container: DIContainer
 
@@ -96,55 +97,28 @@ private struct HomeStackNavigationView: View {
 
 private struct HomeLegacyNavigationView: View {
     private let routeBuilder: HomeRouteBuilder
-    private let homeNavigator: HomeNavigator
 
-    @StateObject private var state: HomeLegacyNavigationState
+    @StateObject private var controller: HomeLegacyNavigationController
 
     init(container: DIContainer) {
         self.routeBuilder = HomeRouteBuilder(container: container)
-
-        let navigationState = HomeLegacyNavigationState()
-        self._state = StateObject(wrappedValue: navigationState)
-
-        let legacy = LegacyNavigator<HomeRoute>(
-            push: { route in
-                navigationState.stack.append(route)
-            },
-            pop: {
-                _ = navigationState.stack.popLast()
-            },
-            popToRoot: {
-                navigationState.stack.removeAll()
-            },
-            replace: { routes in
-                navigationState.stack = routes
-            },
-            popTo: { route in
-                guard let index = navigationState.stack.lastIndex(of: route) else { return }
-                navigationState.stack = Array(navigationState.stack.prefix(through: index))
-            },
-            present: { route, style in
-                navigationState.presentationItem = PresentationItem(route: route, style: style)
-            },
-            dismiss: {
-                navigationState.presentationItem = nil
-            }
-        )
-        self.homeNavigator = HomeNavigator(navigator: Navigator(legacy))
+        self._controller = StateObject(wrappedValue: HomeLegacyNavigationController())
     }
 
     var body: some View {
+        let navigator = HomeNavigator(navigator: controller.navigator)
+
         NavigationView {
             ZStack {
-                routeBuilder.makeRootView(navigator: homeNavigator)
+                routeBuilder.makeRootView(navigator: navigator)
 
                 NavigationLink(
-                    destination: legacyDestination(),
+                    destination: legacyDestination(navigator: navigator),
                     isActive: Binding(
-                        get: { !state.stack.isEmpty },
+                        get: { !controller.stack.isEmpty },
                         set: { isActive in
                             if !isActive {
-                                _ = state.stack.popLast()
+                                _ = controller.stack.popLast()
                             }
                         }
                     )
@@ -157,7 +131,7 @@ private struct HomeLegacyNavigationView: View {
         .sheet(
             item: Binding<PresentationItem<HomeRoute>?>(
                 get: {
-                    guard let item = state.presentationItem,
+                    guard let item = controller.presentationItem,
                           item.style != .fullScreenCover else {
                         return nil
                     }
@@ -165,17 +139,17 @@ private struct HomeLegacyNavigationView: View {
                 },
                 set: { newValue, _ in
                     if newValue == nil {
-                        state.presentationItem = nil
+                        controller.presentationItem = nil
                     }
                 }
             )
         ) { item in
-            routeBuilder.build(item.route, navigator: homeNavigator)
+            routeBuilder.build(item.route, navigator: navigator)
         }
         .fullScreenCover(
             item: Binding<PresentationItem<HomeRoute>?>(
                 get: {
-                    guard let item = state.presentationItem,
+                    guard let item = controller.presentationItem,
                           item.style == .fullScreenCover else {
                         return nil
                     }
@@ -183,24 +157,54 @@ private struct HomeLegacyNavigationView: View {
                 },
                 set: { newValue, _ in
                     if newValue == nil {
-                        state.presentationItem = nil
+                        controller.presentationItem = nil
                     }
                 }
             )
         ) { item in
-            routeBuilder.build(item.route, navigator: homeNavigator)
+            routeBuilder.build(item.route, navigator: navigator)
         }
     }
 
-    private func legacyDestination() -> AnyView {
-        guard let route = state.stack.last else {
+    private func legacyDestination(navigator: HomeNavigator) -> AnyView {
+        guard let route = controller.stack.last else {
             return AnyView(EmptyView())
         }
-        return routeBuilder.build(route, navigator: homeNavigator)
+        return routeBuilder.build(route, navigator: navigator)
     }
 }
 
-private final class HomeLegacyNavigationState: ObservableObject {
+@MainActor
+private final class HomeLegacyNavigationController: ObservableObject {
     @Published var stack: [HomeRoute] = []
     @Published var presentationItem: PresentationItem<HomeRoute>?
+
+    private(set) lazy var navigator: Navigator<HomeRoute> = {
+        let legacy = LegacyNavigator<HomeRoute>(
+            push: { [weak self] route in
+                self?.stack.append(route)
+            },
+            pop: { [weak self] in
+                _ = self?.stack.popLast()
+            },
+            popToRoot: { [weak self] in
+                self?.stack.removeAll()
+            },
+            replace: { [weak self] routes in
+                self?.stack = routes
+            },
+            popTo: { [weak self] route in
+                guard let self,
+                      let index = self.stack.lastIndex(of: route) else { return }
+                self.stack = Array(self.stack.prefix(through: index))
+            },
+            present: { [weak self] route, style in
+                self?.presentationItem = PresentationItem(route: route, style: style)
+            },
+            dismiss: { [weak self] in
+                self?.presentationItem = nil
+            }
+        )
+        return Navigator(legacy)
+    }()
 }

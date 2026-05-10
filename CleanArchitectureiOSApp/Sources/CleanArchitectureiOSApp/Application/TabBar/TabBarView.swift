@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import DesignSystem
 
 struct TabBarView: View {
     private let container: DIContainer
+    private let tabBarStylePolicy = DSTabBarStylePolicy.standard
 
     @StateObject private var coordinator: TabBarCoordinator
 
@@ -33,7 +35,16 @@ struct TabBarView: View {
             ForEach(items, id: \.item) { descriptor in
                 tabRoot(for: descriptor.item, title: descriptor.title)
                     .tabItem {
-                        Label(descriptor.title, systemImage: descriptor.systemImage)
+                        Label {
+                            Text(descriptor.title)
+                        } icon: {
+                            Image(systemName: systemImageName(for: descriptor))
+                                .font(.system(size: tabBarStylePolicy.iconSize))
+                                .frame(
+                                    width: tabBarStylePolicy.iconSize,
+                                    height: tabBarStylePolicy.iconSize
+                                )
+                        }
                     }
                     .tag(descriptor.item)
             }
@@ -53,5 +64,11 @@ struct TabBarView: View {
         case .tabbar2, .tabbar4, .tabbar5:
             PlaceholderTabRootView(title: title)
         }
+    }
+
+    private func systemImageName(for descriptor: TabBarItemDescriptor) -> String {
+        coordinator.selectedTab == descriptor.item
+            ? descriptor.selectedSystemImage
+            : descriptor.systemImage
     }
 }

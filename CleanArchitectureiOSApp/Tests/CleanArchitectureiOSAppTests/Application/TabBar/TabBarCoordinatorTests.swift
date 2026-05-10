@@ -8,8 +8,8 @@
 import XCTest
 @testable import CleanArchitectureiOSApp
 
-@MainActor
 final class TabBarCoordinatorTests: XCTestCase {
+    @MainActor
     func test_init_setsHomeAsDefaultSelectedTab() {
         let sessionController = SessionController()
         let sut = TabBarCoordinator(sessionController: sessionController)
@@ -17,6 +17,7 @@ final class TabBarCoordinatorTests: XCTestCase {
         XCTAssertEqual(sut.selectedTab, .home)
     }
 
+    @MainActor
     func test_select_changesSelectedTab() {
         let sessionController = SessionController()
         let sut = TabBarCoordinator(sessionController: sessionController)
@@ -26,6 +27,7 @@ final class TabBarCoordinatorTests: XCTestCase {
         XCTAssertEqual(sut.selectedTab, .account)
     }
 
+    @MainActor
     func test_loginState_reflectsSessionControllerChanges() {
         let sessionController = SessionController()
         let sut = TabBarCoordinator(sessionController: sessionController)

@@ -7,22 +7,16 @@
 
 import Foundation
 import SwiftUI
-//import Persistence
 
 @main
 struct CleanArchitectureiOSApp: App {
-    private let container: DIContainer
-    
     init() {
-//        let migration: RealmSwiftDBMigrationProtocol = RealmSwiftDBMigration()
-//        migration.configuration()
-        
-        self.container = DIContainer.makeDefault()
+        AppAppearanceConfigurator.configure()
     }
-    
+
     var body: some Scene {
         WindowGroup {
-            AppRootView(container: container)
+            AppRootView()
         }
     }
 }

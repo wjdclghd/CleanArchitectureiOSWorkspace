@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Account 화면 흐름에서 사용하는 route 경로입니다.
 enum AccountRoute: Hashable, Identifiable {
     case settings
 

@@ -8,14 +8,15 @@
 import XCTest
 @testable import CleanArchitectureiOSApp
 
-@MainActor
 final class AppFlowViewModelTests: XCTestCase {
+    @MainActor
     func test_init_setsIntroState() {
         let sut = AppFlowViewModel()
 
         XCTAssertEqual(sut.appFlowState, .intro)
     }
 
+    @MainActor
     func test_completeIntro_movesToTabBar() {
         let sut = AppFlowViewModel()
 
