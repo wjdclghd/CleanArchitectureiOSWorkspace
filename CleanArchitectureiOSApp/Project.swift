@@ -8,7 +8,14 @@
 import ProjectDescription
 
 let settings: Settings = .settings(
-  base: [:],
+  base: [
+    "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
+    "CLANG_CXX_LANGUAGE_STANDARD": "gnu++20",
+    "ENABLE_USER_SCRIPT_SANDBOXING": "YES",
+    "GCC_C_LANGUAGE_STANDARD": "gnu17",
+    "LOCALIZATION_PREFERS_STRING_CATALOGS": "YES",
+    "MTL_FAST_MATH": "YES"
+  ],
   configurations: [
     .debug(name: "Debug", xcconfig: .relativeToManifest("Configurations/Debug.xcconfig")),
     .release(name: "Release", xcconfig: .relativeToManifest("Configurations/Release.xcconfig")),
@@ -40,7 +47,7 @@ let project = Project(
       ]),
       sources: ["Sources/**"],
       resources: [
-        .glob(pattern: "Sources/Resources/**")
+        .glob(pattern: "Sources/CleanArchitectureiOSApp/Resources/**")
       ],
       dependencies: [
         .external(name: "FeatureIntro"),
@@ -71,6 +78,16 @@ let project = Project(
       deploymentTargets: .iOS("15.0"),
       infoPlist: .default,
       sources: ["Tests/**"],
+      dependencies: [.target(name: "CleanArchitectureiOSApp")]
+    ),
+    .target(
+      name: "CleanArchitectureiOSAppUITests",
+      destinations: .iOS,
+      product: .uiTests,
+      bundleId: "com.jch.CleanArchitectureiOSAppUITests",
+      deploymentTargets: .iOS("15.0"),
+      infoPlist: .default,
+      sources: ["UITests/**"],
       dependencies: [.target(name: "CleanArchitectureiOSApp")]
     )
   ]

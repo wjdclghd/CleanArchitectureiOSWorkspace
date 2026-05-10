@@ -1,5 +1,5 @@
 //
-//  UserSessionStoreTests.swift
+//  SessionControllerTests.swift
 //  CleanArchitectureiOSApp
 //
 //  Created by jch on 4/14/26.
@@ -8,8 +8,8 @@
 import XCTest
 @testable import CleanArchitectureiOSApp
 
-@MainActor
 final class SessionControllerTests: XCTestCase {
+    @MainActor
     func test_init_setsLoggedOutState() {
         let sut = SessionController()
 
@@ -17,6 +17,7 @@ final class SessionControllerTests: XCTestCase {
         XCTAssertFalse(sut.isLoggedIn)
     }
 
+    @MainActor
     func test_signIn_setsLoggedInState() {
         let sut = SessionController()
 
@@ -26,6 +27,7 @@ final class SessionControllerTests: XCTestCase {
         XCTAssertTrue(sut.isLoggedIn)
     }
 
+    @MainActor
     func test_signOut_setsLoggedOutState() {
         let sut = SessionController()
         sut.signIn()

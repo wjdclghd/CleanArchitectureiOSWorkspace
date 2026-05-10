@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FeatureIntro
 
 struct AppFlowView: View {
     private let container: DIContainer
@@ -21,7 +22,7 @@ struct AppFlowView: View {
         Group {
             switch viewModel.appFlowState {
             case .intro:
-                IntroView(
+                IntroFactory().makeIntroView(
                     onNext: {
                         viewModel.completeIntro()
                     }

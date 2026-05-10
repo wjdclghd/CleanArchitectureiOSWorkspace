@@ -8,6 +8,7 @@
 import Foundation
 import Navigation
 
+/// Account 화면 흐름에서 사용하는 App 레이어 navigator입니다.
 @MainActor
 final class AccountNavigator {
     private let navigator: Navigator<AccountRoute>
