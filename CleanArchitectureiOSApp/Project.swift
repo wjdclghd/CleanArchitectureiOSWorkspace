@@ -64,6 +64,7 @@ let project = Project(
         
         .external(name: "Navigation"),
         .external(name: "Networking"),
+        .external(name: "Keychain"),
         .external(name: "Persistence"),
         .external(name: "SearchEngine"),
         .external(name: "DesignSystem")

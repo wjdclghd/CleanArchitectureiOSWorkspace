@@ -18,7 +18,10 @@ struct TabBarView: View {
         self.container = container
         self._coordinator = StateObject(
             wrappedValue: TabBarCoordinator(
-                sessionController: container.sessionController
+                sessionController: container.sessionController,
+                initialSelectedTab: container.appEnvironment.launchConfiguration.stubLoginSuccess
+                    ? .account
+                    : .home
             )
         )
     }
@@ -45,6 +48,7 @@ struct TabBarView: View {
                                     height: tabBarStylePolicy.iconSize
                                 )
                         }
+                        .accessibilityIdentifier(tabAccessibilityIdentifier(for: descriptor.item))
                     }
                     .tag(descriptor.item)
             }
@@ -70,5 +74,20 @@ struct TabBarView: View {
         coordinator.selectedTab == descriptor.item
             ? descriptor.selectedSystemImage
             : descriptor.systemImage
+    }
+
+    private func tabAccessibilityIdentifier(for item: TabBarItem) -> String {
+        switch item {
+        case .home:
+            return "tab.home.button"
+        case .tabbar2:
+            return "tab.tabbar2.button"
+        case .account:
+            return "tab.account.button"
+        case .tabbar4:
+            return "tab.tabbar4.button"
+        case .tabbar5:
+            return "tab.tabbar5.button"
+        }
     }
 }

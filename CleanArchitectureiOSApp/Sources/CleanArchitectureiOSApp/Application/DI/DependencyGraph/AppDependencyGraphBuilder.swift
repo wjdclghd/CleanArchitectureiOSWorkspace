@@ -11,7 +11,7 @@ enum AppDependencyGraphBuilder {
     @MainActor
     static func makeContainer(environment: AppEnvironment) async throws -> DIContainer {
         switch environment.dependencyProfile {
-        case .production:
+        case .local, .development, .staging, .production:
             return try await ProductionDependencyBuilder.makeContainer(
                 environment: environment
             )

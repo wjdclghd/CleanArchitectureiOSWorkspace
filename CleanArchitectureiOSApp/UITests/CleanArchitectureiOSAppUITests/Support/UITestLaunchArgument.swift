@@ -9,4 +9,5 @@ enum UITestLaunchArgument {
     static let uiTesting = "--ui-testing"
     static let resetState = "--reset-state"
     static let stubSearchSuccess = "--stub-search-success"
+    static let stubLoginSuccess = "--stub-login-success"
 }

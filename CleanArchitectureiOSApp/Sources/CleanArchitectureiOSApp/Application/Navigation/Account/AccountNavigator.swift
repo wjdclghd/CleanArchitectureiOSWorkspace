@@ -7,10 +7,11 @@
 
 import Foundation
 import Navigation
+import FeatureMyPage
 
 /// Account 화면 흐름에서 사용하는 App 레이어 navigator입니다.
 @MainActor
-final class AccountNavigator {
+final class AccountNavigator: MyPageCoordinatorProtocol {
     private let navigator: Navigator<AccountRoute>
 
     init(navigator: Navigator<AccountRoute>) {
@@ -27,5 +28,11 @@ final class AccountNavigator {
 
     func popToRoot() {
         navigator.popToRoot()
+    }
+
+    // MARK: - MyPageCoordinatorProtocol
+
+    func openSettings() {
+        showSettings()
     }
 }

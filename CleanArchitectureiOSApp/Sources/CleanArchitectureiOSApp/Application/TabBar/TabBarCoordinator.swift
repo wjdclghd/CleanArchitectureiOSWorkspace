@@ -20,10 +20,14 @@ final class TabBarCoordinator: ObservableObject, TabNavigatorProtocol {
     private let sessionController: SessionController
     private var cancellables: Set<AnyCancellable> = []
 
-    init(sessionController: SessionController) {
+    init(
+        sessionController: SessionController,
+        initialSelectedTab: TabBarItem = .home
+    ) {
         self.sessionController = sessionController
+        self.selectedTab = initialSelectedTab
 
-        sessionController.$loginState
+        sessionController.$sessionState
             .sink { [weak self] _ in
                 self?.objectWillChange.send()
             }

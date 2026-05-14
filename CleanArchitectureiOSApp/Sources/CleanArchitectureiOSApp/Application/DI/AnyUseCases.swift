@@ -8,6 +8,65 @@
 import Foundation
 import AppDomain
 
+struct AnyLoginUseCase: LoginUseCaseProtocol {
+    private let executeHandler: @Sendable (String, String) async throws -> AuthSessionEntity
+
+    init<UseCase: LoginUseCaseProtocol>(_ useCase: UseCase) {
+        self.executeHandler = { email, password in
+            try await useCase.execute(email: email, password: password)
+        }
+    }
+
+    init(
+        execute: @escaping @Sendable (String, String) async throws -> AuthSessionEntity
+    ) {
+        self.executeHandler = execute
+    }
+
+    func execute(
+        email: String,
+        password: String
+    ) async throws -> AuthSessionEntity {
+        try await executeHandler(email, password)
+    }
+}
+
+struct AnySessionLogoutUseCase: LogoutSessionUseCaseProtocol {
+    private let executeHandler: @Sendable () async throws -> Void
+
+    init<UseCase: LogoutSessionUseCaseProtocol>(_ useCase: UseCase) {
+        self.executeHandler = { try await useCase.execute() }
+    }
+
+    init(execute: @escaping @Sendable () async throws -> Void) {
+        self.executeHandler = execute
+    }
+
+    func execute() async throws {
+        try await executeHandler()
+    }
+}
+
+struct AnyRefreshAuthTokenUseCase: RefreshAuthTokenUseCaseProtocol {
+    private let executeHandler: @Sendable (String) async throws -> AuthSessionEntity
+
+    init<UseCase: RefreshAuthTokenUseCaseProtocol>(_ useCase: UseCase) {
+        self.executeHandler = { refreshToken in
+            try await useCase.execute(refreshToken: refreshToken)
+        }
+    }
+
+    init(
+        execute: @escaping @Sendable (String) async throws -> AuthSessionEntity
+    ) {
+        self.executeHandler = execute
+    }
+
+    func execute(refreshToken: String) async throws -> AuthSessionEntity {
+        try await executeHandler(refreshToken)
+    }
+}
+
 struct AnySearchAppStoreListUseCase: SearchAppStoreListUseCaseProtocol {
     private let executeHandler: @Sendable (String) async throws -> [SearchAppStoreListEntity]
 

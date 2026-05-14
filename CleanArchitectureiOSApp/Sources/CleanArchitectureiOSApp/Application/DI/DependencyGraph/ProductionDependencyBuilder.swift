@@ -7,17 +7,21 @@
 
 import Foundation
 import Networking
+import Keychain
 import Persistence
 import SearchEngine
 import AppDomain
 import AppData
 
 enum ProductionDependencyBuilder {
+
     @MainActor
     static func makeContainer(environment: AppEnvironment) async throws -> DIContainer {
         let coreDependencies = try await makeCoreDependencies()
+        let authDependencies = makeAuthDependencies(coreDependencies: coreDependencies, environment: environment)
         let searchAppStoreRemoteDataSource = SearchAppStoreDataSource(
-            networkClient: coreDependencies.networkClient
+            networkClient: coreDependencies.networkClient,
+            baseURL: environment.searchAppStoreBaseURL
         )
         let searchAppStoreListRepository = SearchAppStoreListRepository(
             dataSource: searchAppStoreRemoteDataSource
@@ -40,14 +44,18 @@ enum ProductionDependencyBuilder {
             dataSource: searchSuggestionDataSource
         )
 
+        let sessionController = SessionController()
         let container = DIContainer(
             appConfiguration: DebugAppConfiguration(),
             appEnvironment: environment,
-            sessionController: SessionController(),
+            sessionController: sessionController,
             networkClient: coreDependencies.networkClient,
             persistenceContainer: coreDependencies.persistenceContainer,
             searchEngineContainer: coreDependencies.searchEngineContainer,
             searchEngine: coreDependencies.searchEngine,
+            loginUseCase: authDependencies.loginUseCase,
+            sessionLogoutUseCase: authDependencies.sessionLogoutUseCase,
+            refreshAuthTokenUseCase: authDependencies.refreshAuthTokenUseCase,
             searchAppStoreListUseCase: AnySearchAppStoreListUseCase(
                 SearchAppStoreListUseCase(repository: searchAppStoreListRepository)
             ),
@@ -66,6 +74,10 @@ enum ProductionDependencyBuilder {
         )
 
         try await indexSearchSuggestionSeeds(searchEngine: coreDependencies.searchEngine)
+        await restoreSession(
+            sessionController: sessionController,
+            restorationUseCase: authDependencies.sessionRestorationUseCase
+        )
 
         return container
     }
@@ -74,9 +86,17 @@ enum ProductionDependencyBuilder {
 private extension ProductionDependencyBuilder {
     struct CoreDependencies {
         let networkClient: URLSessionNetworkClient
+        let keychainContainer: KeychainContainer
         let persistenceContainer: PersistenceContainer
         let searchEngineContainer: SearchEngineContainer
         let searchEngine: AnySearchEngine
+    }
+
+    struct AuthDependencies {
+        let loginUseCase: AnyLoginUseCase
+        let sessionLogoutUseCase: AnySessionLogoutUseCase
+        let refreshAuthTokenUseCase: AnyRefreshAuthTokenUseCase
+        let sessionRestorationUseCase: any RestoreSessionUseCaseProtocol
     }
 
     static func makeCoreDependencies() async throws -> CoreDependencies {
@@ -84,16 +104,67 @@ private extension ProductionDependencyBuilder {
         let networkClient = URLSessionNetworkClient(
             requestBuilder: networkRequestBuilder
         )
+        let keychainContainer = KeychainContainer()
         let persistenceContainer = try await PersistenceContainer.makeDefault()
         let searchEngineContainer = try SearchEngineContainer.makeDefault()
         let searchEngine = AnySearchEngine(searchEngineContainer.makeSearchEngine())
 
         return CoreDependencies(
             networkClient: networkClient,
+            keychainContainer: keychainContainer,
             persistenceContainer: persistenceContainer,
             searchEngineContainer: searchEngineContainer,
             searchEngine: searchEngine
         )
+    }
+
+    static func makeAuthDependencies(
+        coreDependencies: CoreDependencies,
+        environment: AppEnvironment
+    ) -> AuthDependencies {
+        let authRemoteDataSource = AuthRemoteDataSource(
+            networkClient: coreDependencies.networkClient,
+            baseURL: environment.authBaseURL
+        )
+        let authTokenLocalDataSource = AuthTokenLocalDataSource(
+            store: coreDependencies.keychainContainer.makeAuthTokenStore()
+        )
+        let authSessionLocalDataSource = AuthSessionLocalDataSource(
+            store: coreDependencies.persistenceContainer.makeAuthSessionStore()
+        )
+        let authRepository = AuthRepository(
+            remoteDataSource: authRemoteDataSource,
+            tokenLocalDataSource: authTokenLocalDataSource,
+            sessionLocalDataSource: authSessionLocalDataSource,
+            environment: environment.authStorageKey
+        )
+
+        return AuthDependencies(
+            loginUseCase: AnyLoginUseCase(
+                LoginUseCase(repository: authRepository)
+            ),
+            sessionLogoutUseCase: AnySessionLogoutUseCase(
+                LogoutSessionUseCase(repository: authRepository)
+            ),
+            refreshAuthTokenUseCase: AnyRefreshAuthTokenUseCase(
+                RefreshAuthTokenUseCase(repository: authRepository)
+            ),
+            sessionRestorationUseCase: RestoreSessionUseCase(repository: authRepository)
+        )
+    }
+
+    @MainActor
+    static func restoreSession(
+        sessionController: SessionController,
+        restorationUseCase: any RestoreSessionUseCaseProtocol
+    ) async {
+        sessionController.beginRestoring()
+
+        if let user = await restorationUseCase.execute() {
+            sessionController.restoreSession(user)
+        } else {
+            sessionController.signOut()
+        }
     }
 
     static func indexSearchSuggestionSeeds(searchEngine: AnySearchEngine) async throws {

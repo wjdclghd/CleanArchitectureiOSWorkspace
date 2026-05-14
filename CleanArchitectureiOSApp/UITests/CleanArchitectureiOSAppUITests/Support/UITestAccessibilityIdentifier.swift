@@ -6,6 +6,21 @@
 //
 
 enum UITestAccessibilityIdentifier {
+    enum TabBar {
+        static let accountButton = "tab.account.button"
+    }
+
+    enum Account {
+        static let loginRoot = "account.login.root"
+        static let myPageRoot = "account.myPage.root"
+    }
+
+    enum Login {
+        static let emailTextField = "login.emailTextField"
+        static let passwordSecureField = "login.passwordSecureField"
+        static let submitButton = "login.submitButton"
+    }
+
     enum Home {
         static let searchEntry = "home.search.entry"
     }

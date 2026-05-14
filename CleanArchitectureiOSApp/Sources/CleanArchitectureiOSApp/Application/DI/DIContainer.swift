@@ -21,6 +21,9 @@ struct DIContainer {
     let persistenceContainer: PersistenceContainer
     let searchEngineContainer: SearchEngineContainer
     let searchEngine: AnySearchEngine
+    let loginUseCase: AnyLoginUseCase
+    let sessionLogoutUseCase: AnySessionLogoutUseCase
+    let refreshAuthTokenUseCase: AnyRefreshAuthTokenUseCase
     let searchAppStoreListUseCase: AnySearchAppStoreListUseCase
     let searchAppStoreDetailUseCase: AnySearchAppStoreDetailUseCase
     let searchHistoryUseCase: AnySearchHistoryUseCase
@@ -29,6 +32,9 @@ struct DIContainer {
     typealias SearchAppStoreRemoteDataSource = SearchAppStoreDataSource<URLSessionNetworkClient>
     typealias SearchAppStoreListRepositoryType = SearchAppStoreListRepository<SearchAppStoreRemoteDataSource>
     typealias SearchAppStoreDetailRepositoryType = SearchAppStoreDetailRepository<SearchAppStoreRemoteDataSource>
+    typealias LoginUseCaseType = AnyLoginUseCase
+    typealias SessionLogoutUseCaseType = AnySessionLogoutUseCase
+    typealias RefreshAuthTokenUseCaseType = AnyRefreshAuthTokenUseCase
     typealias SearchAppStoreListUseCaseType = AnySearchAppStoreListUseCase
     typealias SearchAppStoreDetailUseCaseType = AnySearchAppStoreDetailUseCase
 
@@ -50,6 +56,21 @@ extension DIContainer {
         return try await AppDependencyGraphBuilder.makeContainer(
             environment: environment
         )
+    }
+
+    /// 로그인 유스케이스를 생성합니다.
+    func makeLoginUseCase() -> LoginUseCaseType {
+        loginUseCase
+    }
+
+    /// 세션 로그아웃 유스케이스를 생성합니다.
+    func makeSessionLogoutUseCase() -> SessionLogoutUseCaseType {
+        sessionLogoutUseCase
+    }
+
+    /// 인증 token 재발급 유스케이스를 생성합니다.
+    func makeRefreshAuthTokenUseCase() -> RefreshAuthTokenUseCaseType {
+        refreshAuthTokenUseCase
     }
 
     /// SearchAppStore 목록 조회 유스케이스를 생성합니다.
