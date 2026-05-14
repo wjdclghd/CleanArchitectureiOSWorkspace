@@ -29,6 +29,7 @@ let package = Package(
         
         .package(path: "../Modules/Core/Navigation"),
         .package(path: "../Modules/Core/Infrastructure/Networking"),
+        .package(path: "../Modules/Core/Infrastructure/Keychain"),
         .package(path: "../Modules/Core/Infrastructure/Persistence"),
         .package(path: "../Modules/Core/Infrastructure/SearchEngine"),
         .package(path: "../Modules/Core/Infrastructure/ImagePipeline"),

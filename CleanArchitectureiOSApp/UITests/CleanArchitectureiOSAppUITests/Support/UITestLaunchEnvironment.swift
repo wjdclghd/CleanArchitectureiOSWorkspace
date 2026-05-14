@@ -9,4 +9,5 @@ enum UITestLaunchEnvironment {
     static let uiTesting = "UI_TESTING"
     static let resetState = "UI_TEST_RESET_STATE"
     static let stubSearchSuccess = "UI_TEST_STUB_SEARCH_SUCCESS"
+    static let stubLoginSuccess = "UI_TEST_STUB_LOGIN_SUCCESS"
 }

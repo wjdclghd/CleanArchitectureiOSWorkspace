@@ -38,6 +38,7 @@ struct AccountNavigationView: View {
 
 @available(iOS 16.0, *)
 private struct AccountStackNavigationView: View {
+    private let container: DIContainer
     private let routeBuilder: AccountRouteBuilder
     private let accountNavigator: AccountNavigator
 
@@ -46,6 +47,7 @@ private struct AccountStackNavigationView: View {
     @StateObject private var stack: StackNavigator<AccountRoute>
 
     init(container: DIContainer, sessionController: SessionController) {
+        self.container = container
         self._sessionController = ObservedObject(wrappedValue: sessionController)
 
         let stack = StackNavigator<AccountRoute>()
@@ -66,6 +68,7 @@ private struct AccountStackNavigationView: View {
         ) {
             routeBuilder.makeRootView(
                 loginState: sessionController.loginState,
+                container: container,
                 sessionController: sessionController,
                 navigator: accountNavigator
             )
@@ -116,6 +119,7 @@ private struct AccountStackNavigationView: View {
 }
 
 private struct AccountLegacyNavigationView: View {
+    private let container: DIContainer
     private let routeBuilder: AccountRouteBuilder
 
     @ObservedObject private var sessionController: SessionController
@@ -123,6 +127,7 @@ private struct AccountLegacyNavigationView: View {
     @StateObject private var controller: AccountLegacyNavigationController
 
     init(container: DIContainer, sessionController: SessionController) {
+        self.container = container
         self._sessionController = ObservedObject(wrappedValue: sessionController)
         self.routeBuilder = AccountRouteBuilder()
         self._controller = StateObject(wrappedValue: AccountLegacyNavigationController())
@@ -135,6 +140,7 @@ private struct AccountLegacyNavigationView: View {
             ZStack {
                 routeBuilder.makeRootView(
                     loginState: sessionController.loginState,
+                    container: container,
                     sessionController: sessionController,
                     navigator: navigator
                 )

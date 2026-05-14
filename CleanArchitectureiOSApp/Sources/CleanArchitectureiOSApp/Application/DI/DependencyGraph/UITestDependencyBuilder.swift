@@ -27,6 +27,9 @@ enum UITestDependencyBuilder {
             persistenceContainer: coreDependencies.persistenceContainer,
             searchEngineContainer: coreDependencies.searchEngineContainer,
             searchEngine: coreDependencies.searchEngine,
+            loginUseCase: makeLoginUseCase(scenario: scenario),
+            sessionLogoutUseCase: makeSessionLogoutUseCase(scenario: scenario),
+            refreshAuthTokenUseCase: makeRefreshAuthTokenUseCase(scenario: scenario),
             searchAppStoreListUseCase: makeSearchAppStoreListUseCase(scenario: scenario),
             searchAppStoreDetailUseCase: makeSearchAppStoreDetailUseCase(scenario: scenario),
             searchHistoryUseCase: makeSearchHistoryUseCase(scenario: scenario),
@@ -64,7 +67,7 @@ private extension UITestDependencyBuilder {
         scenario: UITestScenario
     ) -> AnySearchAppStoreListUseCase {
         switch scenario {
-        case .searchSuccess:
+        case .searchSuccess, .loginSuccess:
             return AnySearchAppStoreListUseCase { _ in
                 UITestSearchStubData.listItems
             }
@@ -75,7 +78,7 @@ private extension UITestDependencyBuilder {
         scenario: UITestScenario
     ) -> AnySearchAppStoreDetailUseCase {
         switch scenario {
-        case .searchSuccess:
+        case .searchSuccess, .loginSuccess:
             return AnySearchAppStoreDetailUseCase { _ in
                 UITestSearchStubData.detailItem
             }
@@ -86,7 +89,7 @@ private extension UITestDependencyBuilder {
         scenario: UITestScenario
     ) -> AnySearchHistoryUseCase {
         switch scenario {
-        case .searchSuccess:
+        case .searchSuccess, .loginSuccess:
             return AnySearchHistoryUseCase(
                 fetchRecentKeywords: {
                     [
@@ -111,7 +114,7 @@ private extension UITestDependencyBuilder {
         scenario: UITestScenario
     ) -> AnySearchCandidateUseCase {
         switch scenario {
-        case .searchSuccess:
+        case .searchSuccess, .loginSuccess:
             return AnySearchCandidateUseCase(
                 fetchDefaultCandidates: {
                     UITestSearchStubData.candidates
@@ -122,6 +125,65 @@ private extension UITestDependencyBuilder {
                     }
                 }
             )
+        }
+    }
+
+    static func makeLoginUseCase(
+        scenario: UITestScenario
+    ) -> AnyLoginUseCase {
+        switch scenario {
+        case .searchSuccess, .loginSuccess:
+            return AnyLoginUseCase { email, _ in
+                AuthSessionEntity(
+                    token: AuthTokenEntity(
+                        accessToken: "ui-test-access-token",
+                        refreshToken: "ui-test-refresh-token",
+                        accessTokenExpiresAt: Date(timeIntervalSince1970: 1_800_000_000),
+                        refreshTokenExpiresAt: Date(timeIntervalSince1970: 1_900_000_000)
+                    ),
+                    user: AuthenticatedUserEntity(
+                        userId: 1,
+                        email: email,
+                        nickname: "UITest",
+                        role: "USER",
+                        status: "ACTIVE"
+                    )
+                )
+            }
+        }
+    }
+
+    static func makeSessionLogoutUseCase(
+        scenario: UITestScenario
+    ) -> AnySessionLogoutUseCase {
+        switch scenario {
+        case .searchSuccess, .loginSuccess:
+            return AnySessionLogoutUseCase(execute: { })
+        }
+    }
+
+    static func makeRefreshAuthTokenUseCase(
+        scenario: UITestScenario
+    ) -> AnyRefreshAuthTokenUseCase {
+        switch scenario {
+        case .searchSuccess, .loginSuccess:
+            return AnyRefreshAuthTokenUseCase { _ in
+                AuthSessionEntity(
+                    token: AuthTokenEntity(
+                        accessToken: "ui-test-refreshed-access-token",
+                        refreshToken: "ui-test-refreshed-refresh-token",
+                        accessTokenExpiresAt: Date(timeIntervalSince1970: 1_800_000_000),
+                        refreshTokenExpiresAt: Date(timeIntervalSince1970: 1_900_000_000)
+                    ),
+                    user: AuthenticatedUserEntity(
+                        userId: 1,
+                        email: "uitest@example.com",
+                        nickname: "UITest",
+                        role: "USER",
+                        status: "ACTIVE"
+                    )
+                )
+            }
         }
     }
 }

@@ -13,12 +13,10 @@ import FeatureMyPage
 @MainActor
 struct AccountRouteBuilder {
     private let loginFactory: LoginFactory
-    private let myPageFactory: MyPageFactory
     private let placeholderFactory: PlaceholderTabFactory
 
     init() {
         self.loginFactory = LoginFactory()
-        self.myPageFactory = MyPageFactory()
         self.placeholderFactory = PlaceholderTabFactory()
     }
 
@@ -26,30 +24,42 @@ struct AccountRouteBuilder {
     ///
     /// - Parameters:
     ///   - loginState: 현재 로그인 상태입니다.
+    ///   - container: App 의존성 컨테이너입니다.
     ///   - sessionController: 로그인/로그아웃 액션을 수행하는 컨트롤러입니다.
     ///   - navigator: Account route navigation을 수행하는 navigator입니다.
     /// - Returns: loginState에 따라 로그인 화면 또는 마이페이지 화면입니다.
     func makeRootView(
         loginState: LoginState,
+        container: DIContainer,
         sessionController: SessionController,
         navigator: AccountNavigator
     ) -> AnyView {
         switch loginState {
         case .loggedOut:
+            let coordinator = AccountLoginCoordinator(
+                sessionController: sessionController
+            )
             return AnyView(loginFactory.makeLoginView(
-                onLoginSuccess: {
-                    sessionController.signIn()
-                }
-            ))
+                useCase: container.makeLoginUseCase(),
+                coordinator: coordinator
+            )
+            .accessibilityIdentifier("account.login.root"))
+
         case .loggedIn:
-            return AnyView(myPageFactory.makeMyPageView(
-                onOpenSettings: {
-                    navigator.showSettings()
-                },
-                onLogout: {
-                    sessionController.signOut()
-                }
-            ))
+            let session = sessionController.currentSession
+            let logoutAdapter = MyPageLogoutUseCaseAdapter {
+                try await container.makeSessionLogoutUseCase().execute()
+                await MainActor.run { sessionController.signOut() }
+            }
+            return AnyView(
+                MyPageFactory.makeMyPageView(
+                    logoutUseCase: logoutAdapter,
+                    coordinator: navigator,
+                    nickname: session?.nickname ?? "",
+                    email: session?.email ?? ""
+                )
+                .accessibilityIdentifier("account.myPage.root")
+            )
         }
     }
 
